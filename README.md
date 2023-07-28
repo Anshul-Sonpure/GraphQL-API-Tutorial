@@ -49,6 +49,9 @@ npm start
 Application will start on Port 8085, use the endpoint '/graphql' and you will see the graphql ui.
 Now play around send your queries or mutations.
 
+### _Note_: 
+You can read my article here : https://medium.com/@theautobot/mastering-graphql-for-modern-api-development-step-by-step-guide-61c504a45030
+
 Thank You\
 Happy Coding,\
 Learn,Code and Earn\
