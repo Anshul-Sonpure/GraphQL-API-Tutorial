@@ -33,5 +33,24 @@ GraphQL is a query language for your API, enabling clients to request the exact 
 - Resolver: Resolvers are functions that define how to fetch the data for each field in a GraphQL schema. They are responsible for retrieving the data from the data source.
 - Subscription: Subscriptions allow clients to receive real-time updates from the server when specific events occur.
 
+The Endpoint is hosted on Render: Cloud Application Hosting application<br> 
+To access the endpoint --> https://graphql-api-ppql.onrender.com/graphql<br> 
+For now we have userdata having firstName,lastName,gender,ipaddress.
+And we have 
+1. query -- getallUsers, here you can query as per your need.
+2. mutation -- createUser, here you can create a user with your data.
 
+### To Deploy locally
+First Clone the repo, and open the workspace in Visual Code. Open Terminal and enter below command:
+```sh
+npm install express graphql express-graphql
+npm start
+```
+Application will start on Port 8085, use the endpoint '/graphql' and you will see the graphql ui.
+Now play around send your queries or mutations.
+
+Thank You\
+Happy Coding,\
+Learn,Code and Earn\
+Stay Safe and Stay Positive :)
 
