@@ -49,6 +49,52 @@ npm start
 Application will start on Port 8085, use the endpoint '/graphql' and you will see the graphql ui.
 Now play around send your queries or mutations.
 
+### Query and Mutation Commands
+To Query all users:
+```
+query{
+  getAllUsers{
+    firstName,id
+  }
+}
+```
+To Create a new user:
+```
+mutation{
+  createUser(firstName:"Toby",lastName:"K",gender:"Male",ipaddress:"202.123.32.11")
+  {firstName,id
+    
+  }
+}
+```
+To Update a User:
+```
+mutation {
+  updateUser(id:24, firstName: "Denver") {
+    id
+    firstName
+    lastName
+    email
+    gender
+    ipaddress
+  }
+}
+```
+
+To Delete a User:
+```
+mutation {
+  deleteUser(id: 1) {
+    id
+    firstName
+    lastName
+    email
+    gender
+    ipaddress
+  }
+}
+```
+
 ### _Note_: 
 You can read my article here : https://medium.com/@theautobot/mastering-graphql-for-modern-api-development-step-by-step-guide-61c504a45030
 
