@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT||8085;
 const graphql = require('graphql');
-const { GraphQLScalarType, Kind, GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLList } = require('graphql');
+const { GraphQLScalarType, Kind, GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLList,GraphQLNonNull } = require('graphql');
 const {graphqlHTTP} = require('express-graphql');
-
+const jwt = require('jsonwebtoken');
 
 
 // Step 1: Define the custom scalar type for IPAddress
@@ -36,15 +36,35 @@ const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
     id: { type: GraphQLInt },
-    firstName: { type: GraphQLString },
-    lastName: { type: GraphQLString },
-    email: { type: GraphQLString },
-    gender: { type: GraphQLString },
+    firstName: { type: GraphQLNonNull(GraphQLString) },
+    lastName: { type: GraphQLNonNull(GraphQLString) },
+    email: { type: GraphQLNonNull(GraphQLString) },
+    gender: { type: GraphQLNonNull(GraphQLString) },
     ipaddress: { type: IPAddress }, // Step 2: Use the IPAddress scalar type here
   }),
 });
 
 const userData = require('./userdata.json');
+
+// Secret key for JWT signing and validation
+const secretKey = 'Little is what we know,little is what we get'; // Replace with your actual secret key
+
+// Dummy user data for authentication
+const users = [
+  { id: 1, username: 'AdminUser1', password: 'Admin@User1' },
+  { id: 2, username: 'AdminUser2', password: 'Admin@User1' },
+];
+
+// Custom GraphQL type for user authentication
+const AuthType = new GraphQLObjectType({
+  name: 'Auth',
+  fields: () => ({
+    username: { type: GraphQLString },
+    authToken: { type: GraphQLString },
+  }),
+});
+
+
 
 const resolvers = {
   IPAddress: IPAddress, // Step 2: Include IPAddressResolver here
@@ -74,10 +94,10 @@ const RootQuery = new GraphQLObjectType({
       createUser: {
         type: UserType,
           args: {
-            firstName: { type: GraphQLString },
-            lastName: { type: GraphQLString },
-            email: { type: GraphQLString },
-            gender: { type: GraphQLString },
+            firstName: { type: GraphQLNonNull(GraphQLString) },
+            lastName: { type: GraphQLNonNull(GraphQLString) },
+            email: { type: GraphQLNonNull(GraphQLString) },
+            gender: { type: GraphQLNonNull(GraphQLString) },
             ipaddress: { type: IPAddress }
           },
           resolve(parent, args) {
@@ -91,6 +111,40 @@ const RootQuery = new GraphQLObjectType({
             });
             return args;
           },
+      },
+      login: {
+        type: AuthType,
+        args: {
+          username: { type: GraphQLNonNull(GraphQLString) },
+          password: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve(parent, args) {
+          const user = users.find(u => u.username === args.username && u.password === args.password);
+          if (!user) {
+            throw new Error('Invalid username or password');
+          }
+  
+          // Generate JWT
+          const authToken = jwt.sign({ username: user.username }, secretKey);
+  
+          return { username: user.username, authToken };
+        },
+      },
+      signIn: {
+        type: GraphQLString,
+        args: {
+          username: { type: GraphQLNonNull(GraphQLString) },
+          authToken: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve(parent, args) {
+          try {
+            // Verify JWT
+            jwt.verify(args.authToken, secretKey);
+            return `Hello, ${args.username}!`;
+          } catch (error) {
+            throw new Error('Invalid authToken');
+          }
+        },
       },
       updateUser: {
         type: UserType,
