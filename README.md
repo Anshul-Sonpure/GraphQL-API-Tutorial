@@ -49,7 +49,48 @@ npm start
 Application will start on Port 8085, use the endpoint '/graphql' and you will see the graphql ui.
 Now play around send your queries or mutations.
 
-### Query and Mutation Commands
+### Query and Mutation Commands--
+SignUp Query:
+Use this query to simulate a user signUp and get the username and authToken.
+
+```
+mutation {
+  signUp(username: "AdminUser1", password: "Admin@User1") {
+    username
+    authToken
+  }
+}
+
+```
+The response will look something like:
+```
+{
+  "data": {
+    "login": {
+      "username": "AdminUser1",
+      "authToken": "your-generated-auth-token"
+    }
+  }
+}
+
+```
+Sign-In Query:
+Use this query to simulate a user sign-in with the username and authToken.
+```
+mutation {
+  signIn(username: "AdminUser1", authToken: "your-generated-auth-token")
+}
+
+```
+The response will be:
+```
+{
+  "data": {
+    "signIn": "Hello, AdminUser1!"
+  }
+}
+
+```
 To Query all users:
 ```
 query{
