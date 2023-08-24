@@ -112,40 +112,6 @@ const RootQuery = new GraphQLObjectType({
             return args;
           },
       },
-      signUp: {
-        type: AuthType,
-        args: {
-          username: { type: GraphQLNonNull(GraphQLString) },
-          password: { type: GraphQLNonNull(GraphQLString) },
-        },
-        resolve(parent, args) {
-          const user = users.find(u => u.username === args.username && u.password === args.password);
-          if (!user) {
-            throw new Error('Invalid username or password');
-          }
-  
-          // Generate JWT
-          const authToken = jwt.sign({ username: user.username }, secretKey);
-  
-          return { username: user.username, authToken };
-        },
-      },
-      signIn: {
-        type: GraphQLString,
-        args: {
-          username: { type: GraphQLNonNull(GraphQLString) },
-          authToken: { type: GraphQLNonNull(GraphQLString) },
-        },
-        resolve(parent, args) {
-          try {
-            // Verify JWT
-            jwt.verify(args.authToken, secretKey);
-            return `Hello, ${args.username}!`;
-          } catch (error) {
-            throw new Error('Invalid authToken');
-          }
-        },
-      },
       updateUser: {
         type: UserType,
         args: {
