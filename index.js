@@ -52,7 +52,7 @@ const secretKey = 'Little is what we know,little is what we get'; // Replace wit
 // Dummy user data for authentication
 const users = [
   { id: 1, username: 'AdminUser1', password: 'Admin@User1' },
-  { id: 2, username: 'AdminUser2', password: 'Admin@User1' },
+  { id: 2, username: 'AdminUser2', password: 'Admin@User2' },
 ];
 
 // Custom GraphQL type for user authentication
@@ -149,6 +149,40 @@ const RootQuery = new GraphQLObjectType({
   
           const deletedUser = userData.splice(userIndex, 1)[0];
           return deletedUser;
+        },
+      },
+      login: {
+        type: AuthType,
+        args: {
+          username: { type: GraphQLNonNull(GraphQLString) },
+          password: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve(parent, args) {
+          const user = users.find(u => u.username === args.username && u.password === args.password);
+          if (!user) {
+            throw new Error('Invalid username or password');
+          }
+  
+          // Generate JWT
+          const authToken = jwt.sign({ username: user.username }, secretKey);
+  
+          return { username: user.username, authToken };
+        },
+      },
+      signIn: {
+        type: GraphQLString,
+        args: {
+          username: { type: GraphQLNonNull(GraphQLString) },
+          authToken: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve(parent, args) {
+          try {
+            // Verify JWT
+            jwt.verify(args.authToken, secretKey);
+            return `Hello, ${args.username}!`;
+          } catch (error) {
+            throw new Error('Invalid authToken');
+          }
         },
       },
     },
