@@ -151,7 +151,7 @@ const RootQuery = new GraphQLObjectType({
           return deletedUser;
         },
       },
-      login: {
+      signUp: {
         type: AuthType,
         args: {
           username: { type: GraphQLNonNull(GraphQLString) },
